@@ -1,3 +1,10 @@
+import sys
+from pathlib import Path
+
+# Add parent directory to Python path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
+from pydoc import text
 import customtkinter as ctk
 
 ctk.set_appearance_mode('dark')
@@ -6,6 +13,8 @@ app = ctk.CTk()
 
 app.title("Calculadora")
 
+def altera_text():
+    labelH2.configure(text="Ola")
 
 app.grid_columnconfigure((0,1,2,3), weight=1)
 
@@ -44,9 +53,10 @@ labelH2.grid(row=3,column=1,padx=20,sticky="ew", pady=40 , columnspan=2)
 labelH2 = ctk.CTkLabel(app, text="0", font=("Terminal",30,"bold"))
 labelH2.grid(row=4,column=1,padx=20,sticky="ew", pady=10 , columnspan=2)
 
-botao = ctk.CTkButton(app, text="Calcular",font=("Terminal",30,"bold"), command="")
+botao = ctk.CTkButton(app, text="Calcular",font=("Terminal",30,"bold"), command=altera_text)
 botao.grid(row=5,column=1,padx=20,sticky="ew", pady=10 , columnspan=2)
 
 app.geometry('1280x720')
 
 app.mainloop()
+
