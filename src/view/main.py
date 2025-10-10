@@ -7,7 +7,11 @@ app = ctk.CTk()
 app.title("Calculadora")
 
 
+app.grid_columnconfigure(0, weight=1)
 app.grid_columnconfigure(1, weight=1)
+app.grid_columnconfigure(2, weight=1)
+app.grid_columnconfigure(3, weight=1)
+
 labelEletro = ctk.CTkLabel(app, text="CTkLabel")
 labelEletro.grid(row= 0, column=0, padx=20, pady=20 , sticky="ew")
 

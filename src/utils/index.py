@@ -14,16 +14,4 @@ def carregajson(file):
     else:
         print("fatores nãoo declarados")
 
-carregajson(file)
-
-
-
-
-
-
-
-
-
-
-
 
