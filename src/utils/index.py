@@ -3,10 +3,27 @@ from pathlib import Path
 
 file = Path("src/Data/fatores.json")
 
-if file.exists():
+def carregajson(file):
 
-    with open(file,"r", encoding="utf-8") as f:
-        fator = json.load(f)
-    print(fator)
-else:
-    print("fatores nãoo declarados")
+    if file.exists():
+
+        with open(file,"r", encoding="utf-8") as f:
+            fator = json.load(f)
+            print(fator)
+            return fator
+    else:
+        print("fatores nãoo declarados")
+
+carregajson(file)
+
+
+
+
+
+
+
+
+
+
+
+
