@@ -1,23 +1,16 @@
-import sys
-from pathlib import Path
-
-# Add parent directory to Python path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+import customtkinter as ctk
 
 from pydoc import text
-import customtkinter as ctk
+
+def start():
+    app.mainloop()
 
 ctk.set_appearance_mode('dark')
 
 app = ctk.CTk()
-
 app.title("Calculadora")
-
-def altera_text():
-    labelH2.configure(text="Ola")
-
+app.geometry('1280x720')
 app.grid_columnconfigure((0,1,2,3), weight=1)
-
 
 labelH1 = ctk.CTkLabel(app, text="Digite a media de Consumo em Cada Categoria", font=("Terminal", 30,"bold"))
 labelH1.grid(row=0, column= 1, pady = 20, sticky= "ew", columnspan=2)
@@ -33,7 +26,6 @@ labelaviao.grid(row= 1, column=2, padx=20, pady=20 , sticky="ew")
 
 labelCarro = ctk.CTkLabel(app, text="Transporte Publico KM/Dia:", font=("Terminal", 20, "bold"))
 labelCarro.grid(row= 1, column=3, padx=20, pady=20 , sticky="ew")
-
 
 entryEletro = ctk.CTkEntry(app)
 entryEletro.grid(row=2, column=0)
@@ -53,10 +45,5 @@ labelH2.grid(row=3,column=1,padx=20,sticky="ew", pady=40 , columnspan=2)
 labelH2 = ctk.CTkLabel(app, text="0", font=("Terminal",30,"bold"))
 labelH2.grid(row=4,column=1,padx=20,sticky="ew", pady=10 , columnspan=2)
 
-botao = ctk.CTkButton(app, text="Calcular",font=("Terminal",30,"bold"), command=altera_text)
+botao = ctk.CTkButton(app, text="Calcular",font=("Terminal",30,"bold"), command=lambda: labelH2.configure(text="Calculando..."))
 botao.grid(row=5,column=1,padx=20,sticky="ew", pady=10 , columnspan=2)
-
-app.geometry('1280x720')
-
-app.mainloop()
-

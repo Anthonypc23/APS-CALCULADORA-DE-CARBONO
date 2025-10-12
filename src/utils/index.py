@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-file = Path("src/Data/fatores.json")
+file = Path("src/data/fatores.json")
 
 def carregajson(file):
 
