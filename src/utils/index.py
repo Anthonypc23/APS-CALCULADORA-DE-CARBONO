@@ -12,7 +12,7 @@ def carregajson(file):
             print(fator)
             return fator
     else:
-        print("fatores nãoo declarados")
+        print("fatores não declarados")
 
 # Tratamento de dados
 def trata_numero(valor):

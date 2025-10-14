@@ -1,9 +1,33 @@
 import customtkinter as ctk
 
+
 from pydoc import text
+
 
 def start():
     app.mainloop()
+
+def salvar_valor():
+    dados= {}
+    dados["eletricidade"] = entryEletro.get()
+    dados["Gasolina"] = entryGasolina.get()
+    dados["Aviao"] = entryAviao.get()
+    dados["Carro"] = entryCarro.get()
+    print(dados)
+    return dados
+
+
+def Srelatorio():
+    relatorio = ctk.CTkToplevel(app)
+    relatorio.title("Relatório")
+    relatorio.geometry('800x600')
+    
+    # Garantir que fique na frente
+    relatorio.transient(app)
+    relatorio.lift()
+    relatorio.focus_force()
+
+
 
 ctk.set_appearance_mode('dark')
 
@@ -45,5 +69,11 @@ labelH2.grid(row=3,column=1,padx=20,sticky="ew", pady=40 , columnspan=2)
 labelH2 = ctk.CTkLabel(app, text="0", font=("Terminal",30,"bold"))
 labelH2.grid(row=4,column=1,padx=20,sticky="ew", pady=10 , columnspan=2)
 
-botao = ctk.CTkButton(app, text="Calcular",font=("Terminal",30,"bold"), command=lambda: labelH2.configure(text="Calculando..."))
-botao.grid(row=5,column=1,padx=20,sticky="ew", pady=10 , columnspan=2)
+btnCalcular = ctk.CTkButton(app, text="Calcular",font=("Terminal",30,"bold"),width=250, command=salvar_valor)
+btnCalcular.grid(row=5,column=1,padx=20,sticky="ew", pady=10)
+
+btnRelatorio = ctk.CTkButton(app, text="Relatorio",font=("Terminal",30,"bold"),width=250, command=Srelatorio)
+btnRelatorio.grid(row=5,column=2,padx=20,sticky="ew", pady=10)
+
+
+
