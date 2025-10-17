@@ -1,38 +1,38 @@
 import json
-from pathlib import Path
+import os.path
 
-file = Path("src/data/fatores.json")
+path = "src/data/fatores.json"
 
-def carregajson(file):
-
-    if file.exists():
-
-        with open(file,"r", encoding="utf-8") as f:
-            fator = json.load(f)
-            print(fator)
-            return fator
-    else:
-        print("fatores não declarados")
+def carregajson(search):
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"O arquivo {path} não foi encontrado.")
+    with open(path, 'r', encoding='utf-8') as f:
+        dados = json.load(f)
+        return dados.get(search)
 
 # Tratamento de dados
-def trata_numero(valor):
-    try:
-        valor = float(valor)
-        if valor < 0:
-            raise ValueError("O valor não pode ser negativo.")
-        return valor
-    except ValueError:
-        raise ValueError("Entrada inválida. Por favor, insira um número válido.")
+def tratar_dados(valores):
+    novos_valores = {}
+    for k, v in valores.items():
+        try:
+            v_float = float(v)
+            if v_float >= 0:
+                novos_valores[k] = v_float
+            else:
+                return None
+        except ValueError:
+            return None
+    return novos_valores
 
 # Calculo de emissões
 def calc_eletricidade(consumo_mensal):
-    return consumo_mensal * carregajson(file)["eletricidade/kwh"]
+    return consumo_mensal * carregajson("eletricidade/kwh")
 
 def calc_combustivel(consumo_mensal):
-    return consumo_mensal * carregajson(file)["combustivel/litro"]
+    return consumo_mensal * carregajson("combustivel/litro")
 
 def calc_voo(distancia):
-    return distancia * carregajson(file)["voo/km"]
+    return distancia * carregajson("voo/km")
 
 def calc_credito(entradas):
     total_emissao = 0
@@ -41,4 +41,4 @@ def calc_credito(entradas):
     total_emissao += calc_combustivel(entradas['combustivel'])
     total_emissao += calc_voo(entradas['voo'])
 
-    return total_emissao / carregajson(file)["credito/ton"]
+    return total_emissao / carregajson("credito/ton")
