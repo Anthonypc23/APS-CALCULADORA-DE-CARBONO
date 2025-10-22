@@ -34,11 +34,27 @@ def calc_combustivel(consumo_mensal):
 def calc_voo(distancia):
     return distancia * carregajson("voo/km")
 
+def calc_Transporte(distancia):
+    return distancia * carregajson("Transporte")
+
+
 def calc_credito(entradas):
+    
     total_emissao = 0
+    valor = {}
 
     total_emissao += calc_eletricidade(entradas['eletricidade'])
     total_emissao += calc_combustivel(entradas['combustivel'])
+    total_emissao += calc_voo(entradas['transporte'])
     total_emissao += calc_voo(entradas['voo'])
 
-    return total_emissao / carregajson("credito/ton")
+    valor['eletricidade'] = calc_eletricidade(entradas['eletricidade'])
+    valor['combustivel'] = calc_combustivel(entradas['combustivel'])
+    valor['Transporte'] = calc_voo(entradas['transporte'])
+    valor['voo'] = calc_voo(entradas['voo'])
+    valor['total'] = total_emissao #/ carregajson("credito/ton")
+    print(valor)
+
+
+
+    return valor

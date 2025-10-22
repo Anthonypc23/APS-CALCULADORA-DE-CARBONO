@@ -1,6 +1,7 @@
 {
-    "eletricidade/kwh": 0.09,
+    "eletricidade/kwh": 0.038,
     "combustivel/litro": 2.3476981357369477,
-    "voo/km": 0.15,
+    "voo/km": 0.123,
+    "Transporte":0.017,
     "credito/ton": 1000
 }
