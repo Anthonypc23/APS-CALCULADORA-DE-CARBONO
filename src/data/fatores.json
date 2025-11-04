@@ -13,36 +13,44 @@
     "preco_credito_rs": 50,
     "compensacao": {
         "plantar_arvore": {
-            "nome": "Plantar 1 Árvore",
-            "reducao_kg_ano": 21.77
+            "nome": "Plantar Árvores",
+            "reducao_kg_ano": 21.77,
+            "descricao": "Cada árvore absorve aproximadamente 21.77 kg de CO2 por ano"
         },
         "bike_km": {
-            "nome": "Andar de Bike (por km)",
-            "reducao_kg": 0.12
+            "nome": "Substituir Carro por Bicicleta",
+            "reducao_kg_ano": 43.8,
+            "descricao": "Andar 1 km de bike ao invés de carro economiza ~0.12 kg CO2. Fazendo 1 km/dia = 43.8 kg/ano"
         },
         "transporte_publico": {
-            "nome": "Usar Transporte Público (por km)",
-            "reducao_kg": 0.08
+            "nome": "Usar Transporte Público",
+            "reducao_kg_ano": 29.2,
+            "descricao": "Usar transporte público ao invés de carro para 1 km/dia economiza ~29.2 kg CO2/ano"
         },
         "reciclagem_kg": {
-            "nome": "Reciclar Lixo (por kg)",
-            "reducao_kg": 0.3
+            "nome": "Reciclar Resíduos",
+            "reducao_kg_mes": 0.3,
+            "descricao": "Reciclar 1 kg de resíduos por mês economiza 0.3 kg CO2/mês"
         },
         "energia_solar_kwh": {
-            "nome": "Energia Solar (por kWh/mês)",
-            "reducao_kg": 0.038
+            "nome": "Instalar Energia Solar",
+            "reducao_kg_mes": 0.038,
+            "descricao": "Cada kWh gerado por energia solar economiza 0.038 kg CO2/mês"
         },
         "reducao_carne": {
-            "nome": "Reduzir Carne (1 refeição/semana)",
-            "reducao_kg_mes": 46.62
+            "nome": "Reduzir Consumo de Carne",
+            "reducao_kg_mes": 46.62,
+            "descricao": "Reduzir 1 refeição de carne por semana economiza ~46.62 kg CO2/mês"
         },
         "carona_solidaria": {
-            "nome": "Carona Solidária (por km)",
-            "reducao_kg": 0.15
+            "nome": "Fazer Carona Solidária",
+            "reducao_kg_ano": 54.75,
+            "descricao": "Compartilhar carro para 1 km/dia economiza ~0.15 kg CO2/dia = 54.75 kg/ano"
         },
         "compostagem_kg": {
-            "nome": "Compostagem (por kg/mês)",
-            "reducao_kg": 0.4
+            "nome": "Fazer Compostagem",
+            "reducao_kg_mes": 0.4,
+            "descricao": "Compostar 1 kg de resíduos orgânicos por mês economiza 0.4 kg CO2/mês"
         }
     }
 }

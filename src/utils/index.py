@@ -28,27 +28,34 @@ def tratar_dados(valores):
             return None
     return novos_valores
 
-# Calculo de emissões
+# Calculo de emissões (ANUAL)
 def calc_eletricidade(consumo_mensal):
-    return consumo_mensal * carregajson("eletricidade/kwh")
+    # Consumo mensal * 12 meses
+    return consumo_mensal * 12 * carregajson("eletricidade/kwh")
 
-def calc_combustivel(consumo_mensal):
-    return consumo_mensal * carregajson("combustivel/litro")
+def calc_combustivel(consumo_diario):
+    # Consumo diário * 365 dias
+    return consumo_diario * 365 * carregajson("combustivel/litro")
 
-def calc_voo(distancia):
-    return distancia * carregajson("voo/km")
+def calc_voo(distancia_mensal):
+    # Distância mensal * 12 meses
+    return distancia_mensal * 12 * carregajson("voo/km")
 
-def calc_Transporte(distancia):
-    return distancia * carregajson("Transporte")
+def calc_Transporte(distancia_diaria):
+    # Distância diária * 365 dias
+    return distancia_diaria * 365 * carregajson("Transporte")
 
 def calc_gas_natural(consumo_mensal):
-    return consumo_mensal * carregajson("gas_natural/m3")
+    # Consumo mensal * 12 meses
+    return consumo_mensal * 12 * carregajson("gas_natural/m3")
 
 def calc_agua(consumo_mensal):
-    return consumo_mensal * carregajson("agua/m3")
+    # Consumo mensal * 12 meses
+    return consumo_mensal * 12 * carregajson("agua/m3")
 
 def calc_residuos(consumo_mensal):
-    return consumo_mensal * carregajson("residuos/kg")
+    # Consumo mensal * 12 meses
+    return consumo_mensal * 12 * carregajson("residuos/kg")
 
 def calc_alimentacao_carne(consumo_semanal):
     # Converte consumo semanal para mensal (4.33 semanas/mês)

@@ -24,7 +24,7 @@ def set_resultado(dados):
 
         valor = calc_credito(dados)
 
-        labelResultado.configure(text=f"{valor['total']:.2f} toneladas de CO²")
+        labelResultado.configure(text=f"{valor['total']:.2f} toneladas de CO2/ano")
     else:
         labelResultado.configure(text="Erro: Entrada inválida. Por favor, insira números válidos.")
 
@@ -47,7 +47,7 @@ def mostrar_compensacao(valores):
     ctk.CTkLabel(frameHeader, text="SISTEMA DE COMPENSAÇÃO DE CARBONO",
                  font=("Arial", 32, "bold"), text_color="white").pack(pady=15)
     
-    ctk.CTkLabel(frameHeader, text=f"Suas emissões: {dados['total']:.2f} toneladas de CO2 | {dados['creditos']} créditos necessários",
+    ctk.CTkLabel(frameHeader, text=f"Suas emissões anuais: {dados['total']:.2f} toneladas de CO2/ano | {dados['creditos']} créditos necessários",
                  font=("Arial", 18), text_color="#f0e68c").pack(pady=(0, 15))
     
     # Frame scrollável
@@ -60,55 +60,72 @@ def mostrar_compensacao(valores):
     
     # Carregar dados de compensação
     import json
-    with open('src/data/fatores.json', 'r', encoding='utf-8') as f:
-        fatores = json.load(f)
+    import os
     
-    compensacoes = fatores.get('compensacao', {})
-    total_emissao_kg = dados['total'] * 1000
+    # Caminho correto para o arquivo JSON
+    caminho_json = os.path.join(os.path.dirname(__file__), '..', 'data', 'fatores.json')
+    caminho_json = os.path.abspath(caminho_json)
+    
+    compensacoes = {}
+    try:
+        with open(caminho_json, 'r', encoding='utf-8') as f:
+            fatores = json.load(f)
+            compensacoes = fatores.get('compensacao', {})
+    except FileNotFoundError:
+        try:
+            # Tenta caminho alternativo
+            caminho_json = 'src/data/fatores.json'
+            with open(caminho_json, 'r', encoding='utf-8') as f:
+                fatores = json.load(f)
+                compensacoes = fatores.get('compensacao', {})
+        except Exception as e:
+            ctk.CTkLabel(frameScroll, text=f"Erro ao carregar dados de compensação: {str(e)}",
+                         font=("Arial", 14), text_color="#ff6b6b").pack(pady=20)
+    
+    if not compensacoes:
+        ctk.CTkLabel(frameScroll, text="Nenhuma ação de compensação disponível.",
+                     font=("Arial", 14), text_color="#ffd700").pack(pady=20)
+    total_emissao_kg = dados['total'] * 1000  # Converte toneladas para kg
     
     # Criar cards para cada ação
     for key, comp in compensacoes.items():
         frameCard = ctk.CTkFrame(frameScroll, fg_color="#1a1a1a", corner_radius=10)
         frameCard.pack(fill="x", padx=20, pady=10)
         
-        # Calcular quantidade necessária
+        # Calcular quantidade necessária (valores já são anuais)
         if 'reducao_kg_ano' in comp:
-            reducao = comp['reducao_kg_ano']
-            quantidade = int(total_emissao_kg / reducao) + 1
-            unidade = "unidades/ano"
-        elif 'reducao_kg_mes' in comp:
-            reducao = comp['reducao_kg_mes']
-            quantidade = int(total_emissao_kg / reducao) + 1
-            unidade = "vezes/mês"
-        else:
-            reducao = comp.get('reducao_kg', 0)
-            quantidade = int(total_emissao_kg / reducao) + 1 if reducao > 0 else 0
+            reducao_anual = comp['reducao_kg_ano']
+            quantidade = int(total_emissao_kg / reducao_anual) + 1 if reducao_anual > 0 else 0
             unidade = "unidades"
+            reducao_display = reducao_anual
+        elif 'reducao_kg_mes' in comp:
+            # Converte para anual (mes * 12)
+            reducao_mensal = comp['reducao_kg_mes']
+            reducao_anual = reducao_mensal * 12
+            quantidade = int(total_emissao_kg / reducao_anual) + 1 if reducao_anual > 0 else 0
+            unidade = "unidades"
+            reducao_display = reducao_anual
+        else:
+            reducao_anual = 0
+            quantidade = 0
+            unidade = "unidades"
+            reducao_display = 0
         
         # Título
         ctk.CTkLabel(frameCard, text=f"{comp['nome']}",
                      font=("Arial", 20, "bold"), text_color="white").pack(anchor="w", padx=20, pady=(15, 5))
         
+        # Descrição
+        if 'descricao' in comp:
+            ctk.CTkLabel(frameCard, text=comp['descricao'],
+                         font=("Arial", 12, "italic"), text_color="#b0b0b0").pack(anchor="w", padx=40, pady=2)
+        
         # Informações
-        ctk.CTkLabel(frameCard, text=f"Compensa: {reducao:.2f} kg de CO2",
-                     font=("Arial", 14), text_color="#90ee90").pack(anchor="w", padx=40, pady=2)
+        ctk.CTkLabel(frameCard, text=f"Compensa: {reducao_display:.2f} kg de CO2/ano por unidade",
+                     font=("Arial", 14), text_color="#90ee90").pack(anchor="w", padx=40, pady=5)
         
-        ctk.CTkLabel(frameCard, text=f"Quantidade necessária para neutralizar: {quantidade} {unidade}",
-                     font=("Arial", 14, "bold"), text_color="#ffd700").pack(anchor="w", padx=40, pady=2)
-        
-        # Barra de progresso visual
-        creditos_gerados = (reducao * quantidade) / 1000
-        progresso = min(creditos_gerados / dados['total'], 1.0)
-        
-        frameProgress = ctk.CTkFrame(frameCard, fg_color="#3a3a3a", height=30, corner_radius=5)
-        frameProgress.pack(fill="x", padx=40, pady=(5, 15))
-        
-        frameProgressBar = ctk.CTkFrame(frameProgress, fg_color="#2d7a3e", 
-                                        width=int(progresso * 500), height=30, corner_radius=5)
-        frameProgressBar.pack(side="left")
-        
-        ctk.CTkLabel(frameProgress, text=f"{progresso*100:.0f}% das suas emissões",
-                     font=("Arial", 12, "bold")).place(relx=0.5, rely=0.5, anchor="center")
+        ctk.CTkLabel(frameCard, text=f"Quantidade necessária para neutralizar suas emissões: {quantidade} {unidade}",
+                     font=("Arial", 14, "bold"), text_color="#ffd700").pack(anchor="w", padx=40, pady=(2, 15))
     
     # Botão fechar
     ctk.CTkButton(janela, text="FECHAR", font=("Arial", 18, "bold"),
@@ -136,10 +153,10 @@ def Srelatorio():
     frameHeader = ctk.CTkFrame(relatorio, fg_color="#2d7a3e", corner_radius=15)
     frameHeader.grid(row=0, column=0, sticky="ew", padx=20, pady=20)
     
-    ctk.CTkLabel(frameHeader, text="RELATÓRIO DETALHADO DE EMISSÕES",
+    ctk.CTkLabel(frameHeader, text="RELATÓRIO DETALHADO DE EMISSÕES ANUAIS",
                  font=("Arial", 32, "bold"), text_color="white").pack(pady=15)
     
-    ctk.CTkLabel(frameHeader, text="Análise completa da sua pegada de carbono",
+    ctk.CTkLabel(frameHeader, text="Análise completa da sua pegada de carbono anual",
                  font=("Arial", 16), text_color="#e0e0e0").pack(pady=(0, 15))
 
     # Frame scrollável para emissões
@@ -170,17 +187,17 @@ def Srelatorio():
             ctk.CTkLabel(frameItem, text=f"{nome}",
                          font=("Arial", 16, "bold"), text_color="white").pack(side="left", padx=20, pady=15)
             
-            ctk.CTkLabel(frameItem, text=f"{valor:.2f} kg CO2",
+            ctk.CTkLabel(frameItem, text=f"{valor:.2f} kg CO2/ano",
                          font=("Arial", 16, "bold"), text_color="#ff6b6b").pack(side="right", padx=20, pady=15)
     
     # Total destacado
     frameTotal = ctk.CTkFrame(frameScroll, fg_color="#1a472a", corner_radius=15)
     frameTotal.pack(fill="x", padx=20, pady=20)
     
-    ctk.CTkLabel(frameTotal, text="TOTAL DE EMISSÕES",
+    ctk.CTkLabel(frameTotal, text="TOTAL DE EMISSÕES ANUAIS",
                  font=("Arial", 24, "bold"), text_color="white").pack(pady=(20, 5))
     
-    ctk.CTkLabel(frameTotal, text=f"{dados['total']:.2f} toneladas de CO2",
+    ctk.CTkLabel(frameTotal, text=f"{dados['total']:.2f} toneladas de CO2/ano",
                  font=("Arial", 32, "bold"), text_color="#90ee90").pack(pady=(5, 20))
     
     # Resumo de compensação
@@ -283,32 +300,32 @@ entryGas = ctk.CTkEntry(frameInputs, placeholder_text="0", width=140, height=40,
                         font=("Arial", 14), justify="center")
 entryGas.grid(row=2, column=4, padx=10, pady=5)
 
-# Segunda linha de inputs
+# Segunda linha de inputs (centralizados)
 labelAgua = ctk.CTkLabel(frameInputs, text="Água\n(m³/Mês)", 
                          font=("Arial", 13, "bold"), justify="center")
-labelAgua.grid(row=3, column=0, padx=10, pady=10)
+labelAgua.grid(row=3, column=1, padx=10, pady=10, columnspan=2)
 
 labelResiduos = ctk.CTkLabel(frameInputs, text="Resíduos\n(kg/Mês)", 
                              font=("Arial", 13, "bold"), justify="center")
-labelResiduos.grid(row=3, column=1, padx=10, pady=10, columnspan=2)
+labelResiduos.grid(row=3, column=3, padx=10, pady=10)
 
-entryAgua = ctk.CTkEntry(frameInputs, placeholder_text="0", width=140, height=40, 
+entryAgua = ctk.CTkEntry(frameInputs, placeholder_text="0", width=300, height=40, 
                          font=("Arial", 14), justify="center")
-entryAgua.grid(row=4, column=0, padx=10, pady=5)
+entryAgua.grid(row=4, column=1, padx=10, pady=5, columnspan=2)
 
-entryResiduos = ctk.CTkEntry(frameInputs, placeholder_text="0", width=300, height=40, 
+entryResiduos = ctk.CTkEntry(frameInputs, placeholder_text="0", width=140, height=40, 
                              font=("Arial", 14), justify="center")
-entryResiduos.grid(row=4, column=1, padx=10, pady=5, columnspan=2)
+entryResiduos.grid(row=4, column=3, padx=10, pady=5)
 
 # Frame de Resultado
 frameResultado = ctk.CTkFrame(app, fg_color="#1a472a", corner_radius=15)
 frameResultado.grid(row=2, column=0, columnspan=5, sticky="ew", padx=20, pady=20)
 
-labelTituloResultado = ctk.CTkLabel(frameResultado, text="TOTAL DE EMISSÕES", 
+labelTituloResultado = ctk.CTkLabel(frameResultado, text="TOTAL DE EMISSÕES ANUAIS", 
                                     font=("Arial", 24, "bold"), text_color="white")
 labelTituloResultado.pack(pady=(20, 10))
 
-labelResultado = ctk.CTkLabel(frameResultado, text="0.00 toneladas de CO2", 
+labelResultado = ctk.CTkLabel(frameResultado, text="0.00 toneladas de CO2/ano", 
                               font=("Arial", 36, "bold"), text_color="#90ee90")
 labelResultado.pack(pady=(0, 20))
 
