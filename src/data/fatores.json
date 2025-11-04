@@ -2,6 +2,47 @@
     "eletricidade/kwh": 0.038,
     "combustivel/litro": 2.3476981357369477,
     "voo/km": 0.123,
-    "Transporte":0.017,
-    "credito/ton": 1000
+    "Transporte": 0.017,
+    "gas_natural/m3": 1.95,
+    "agua/m3": 0.15,
+    "residuos/kg": 0.5,
+    "carne/kg": 27.0,
+    "vegetariano/refeicao": 0.5,
+    "credito/ton": 1000,
+    "arvore_absorcao_kg": 21.77,
+    "preco_credito_rs": 50,
+    "compensacao": {
+        "plantar_arvore": {
+            "nome": "Plantar 1 Árvore",
+            "reducao_kg_ano": 21.77
+        },
+        "bike_km": {
+            "nome": "Andar de Bike (por km)",
+            "reducao_kg": 0.12
+        },
+        "transporte_publico": {
+            "nome": "Usar Transporte Público (por km)",
+            "reducao_kg": 0.08
+        },
+        "reciclagem_kg": {
+            "nome": "Reciclar Lixo (por kg)",
+            "reducao_kg": 0.3
+        },
+        "energia_solar_kwh": {
+            "nome": "Energia Solar (por kWh/mês)",
+            "reducao_kg": 0.038
+        },
+        "reducao_carne": {
+            "nome": "Reduzir Carne (1 refeição/semana)",
+            "reducao_kg_mes": 46.62
+        },
+        "carona_solidaria": {
+            "nome": "Carona Solidária (por km)",
+            "reducao_kg": 0.15
+        },
+        "compostagem_kg": {
+            "nome": "Compostagem (por kg/mês)",
+            "reducao_kg": 0.4
+        }
+    }
 }

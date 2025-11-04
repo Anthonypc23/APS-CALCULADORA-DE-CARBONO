@@ -15,11 +15,15 @@ def tratar_dados(valores):
     novos_valores = {}
     for k, v in valores.items():
         try:
-            v_float = float(v)
-            if v_float >= 0:
-                novos_valores[k] = v_float
+            # Se vazio, considera como 0
+            if v == "" or v is None:
+                novos_valores[k] = 0.0
             else:
-                return None
+                v_float = float(v)
+                if v_float >= 0:
+                    novos_valores[k] = v_float
+                else:
+                    return None
         except ValueError:
             return None
     return novos_valores
@@ -37,24 +41,73 @@ def calc_voo(distancia):
 def calc_Transporte(distancia):
     return distancia * carregajson("Transporte")
 
+def calc_gas_natural(consumo_mensal):
+    return consumo_mensal * carregajson("gas_natural/m3")
+
+def calc_agua(consumo_mensal):
+    return consumo_mensal * carregajson("agua/m3")
+
+def calc_residuos(consumo_mensal):
+    return consumo_mensal * carregajson("residuos/kg")
+
+def calc_alimentacao_carne(consumo_semanal):
+    # Converte consumo semanal para mensal (4.33 semanas/mês)
+    return consumo_semanal * 4.33 * carregajson("carne/kg")
+
+def calc_alimentacao_vegetariana(refeicoes_semanais):
+    # Converte refeições semanais para mensal
+    return refeicoes_semanais * 4.33 * carregajson("vegetariano/refeicao")
 
 def calc_credito(entradas):
     
     total_emissao = 0
     valor = {}
 
+    # Cálculos básicos
     total_emissao += calc_eletricidade(entradas['eletricidade'])
     total_emissao += calc_combustivel(entradas['combustivel'])
-    total_emissao += calc_voo(entradas['transporte'])
+    total_emissao += calc_Transporte(entradas['transporte'])
     total_emissao += calc_voo(entradas['voo'])
 
     valor['eletricidade'] = calc_eletricidade(entradas['eletricidade'])
     valor['combustivel'] = calc_combustivel(entradas['combustivel'])
-    valor['Transporte'] = calc_voo(entradas['transporte'])
+    valor['Transporte'] = calc_Transporte(entradas['transporte'])
     valor['voo'] = calc_voo(entradas['voo'])
-    valor['total'] = total_emissao #/ carregajson("credito/ton")
+    
+    # Novos cálculos
+    if 'gas_natural' in entradas:
+        gas = calc_gas_natural(entradas['gas_natural'])
+        total_emissao += gas
+        valor['gas_natural'] = gas
+    
+    if 'agua' in entradas:
+        agua = calc_agua(entradas['agua'])
+        total_emissao += agua
+        valor['agua'] = agua
+    
+    if 'residuos' in entradas:
+        residuos = calc_residuos(entradas['residuos'])
+        total_emissao += residuos
+        valor['residuos'] = residuos
+    
+    if 'carne' in entradas:
+        carne = calc_alimentacao_carne(entradas['carne'])
+        total_emissao += carne
+        valor['carne'] = carne
+    
+    if 'vegetariano' in entradas:
+        veg = calc_alimentacao_vegetariana(entradas['vegetariano'])
+        total_emissao += veg
+        valor['vegetariano'] = veg
+    
+    # Total em toneladas
+    valor['total'] = total_emissao / 1000
+    
+    # Sistema de compensação
+    import math
+    valor['creditos'] = math.ceil(valor['total'])  # Arredonda para cima
+    valor['arvores'] = math.ceil(total_emissao / carregajson("arvore_absorcao_kg"))
+    valor['valor_compensacao'] = valor['creditos'] * carregajson("preco_credito_rs")
+    
     print(valor)
-
-
-
     return valor
